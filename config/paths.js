@@ -69,6 +69,8 @@ module.exports = {
   appWebpackCache: resolveApp('node_modules/.cache'),
   appTsBuildInfoFile: resolveApp('node_modules/.cache/tsconfig.tsbuildinfo'),
   swSrc: resolveModule(resolveApp, 'src/service-worker'),
+  ssrindexJs: resolveApp("src/index.server.js"), //서버 사이드 렌더링 엔트리설정
+  ssrBuild: resolveApp("dist"), // 웹펙 처리 후 저장할 경로
   publicUrlOrPath,
 };
 
