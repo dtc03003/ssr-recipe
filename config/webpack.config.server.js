@@ -1,4 +1,4 @@
-const nodeExternals = require('webpack-node-externals')
+const nodeExternals = require('webpack-node-externals');
 const paths = require('./paths');
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent'); // CSS Module의 고유 className을 만들 때 필요한 옵션
 const webpack = require('webpack');
@@ -18,8 +18,8 @@ module.exports = {
     output: {
         path: paths.ssrBuild, // 빌드 경로
         filename: 'server.js', // 파일 이름
-        chunkFilename: 'js/[name]/chunk.js', // 청크 파일 이름
-        publicPath: paths.publicUrlOrPath, // 정적 파일이 제공될 경로
+        chunkFilename: 'js/[name].chunk.js', // 청크 파일 이름,
+        publicPath: paths.servedPath, // 정적 파일이 제공될 경로
     },
     module: {
         rules: [
@@ -56,10 +56,12 @@ module.exports = {
                     {
                         test: cssRegex,
                         exclude: cssModuleRegex,
-                        // exportOnlyLocals: true 옵션을 설정해야 실제 CSS 파일을 생성하지 않습니다.
+                        //  exportOnlyLocals: true 옵션을 설정해야 실제 CSS 파일을 생성하지 않습니다.
                         loader: require.resolve('css-loader'),
                         options: {
-                            onlyLocals: true
+                            modules: {
+                                exportOnlyLocals: true,
+                            },
                         }
                     },
                     // CSS Module을 위한 처리
@@ -68,7 +70,7 @@ module.exports = {
                         loader: require.resolve('css-loader'),
                         options: {
                             modules: true,
-                            onlyLocals: true,
+                            exportOnlyLocals: true,
                             getLocalIdent: getCSSModuleLocalIdent
                         }
                     },
@@ -80,7 +82,9 @@ module.exports = {
                             {
                                 loader: require.resolve('css-loader'),
                                 options: {
-                                    onlyLocals: true
+                                    modules: {
+                                        exportOnlyLocals: true,
+                                    },
                                 }
                             },
                             require.resolve('sass-loader')
@@ -95,25 +99,26 @@ module.exports = {
                                 loader: require.resolve('css-loader'),
                                 options: {
                                     modules: true,
-                                    onlyLocals: true,
+                                    exportOnlyLocals: true,
                                     getLocalIdent: getCSSModuleLocalIdent
                                 }
                             },
                             require.resolve('sass-loader')
                         ]
                     },
-
                     // url-loader를 위한 설정
-                    {
-                        test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
-                        loader: require.resolve('url-loader'),
-                        options: {
-                            emitFile: false, // 파일을 따로 저장하지 않는 옵션
-                            limit: 10000, // 원래는 9.76KB가 넘어가면 파일로 저장하는데 emitFile 값이 false일 때는 경로만 준비하고 파일은 저장하지 않는다.
-                            name: 'static/media/[name].[hash:8].[ext]'
-                        }
-                    },
-                    // 위에서 설정된 확장자를 제외한 파일들은 file-loader를 사용한다.
+                    // {
+                    //     test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+                    //     loader: require.resolve('url-loader'),
+                    //     options: {
+                    //         emitFile: false, // 파일을 따로 저장하지 않는 옵션
+                    //         limit: 10000, // 원래는 9.76KB가 넘어가면 파일로 저장하는데
+                    //         // emitFile 값이 false일 때는 경로만 준비하고 파일은 저장하지 않습니다.
+                    //         name: 'static/media/[name].[hash:8].[ext]'
+                    //     }
+                    // },
+                    // 위에서 설정된 확장자를 제외한 파일들은
+                    // file-loader를 사용합니다.
                     {
                         loader: require.resolve('file-loader'),
                         exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
@@ -127,11 +132,10 @@ module.exports = {
         ]
     },
     resolve: {
-        modules: ['node-modules']
+        modules: ['node_modules']
     },
-    externals: [nodeExternals()],
-    plugins: [
-        new webpack.DefinePlugin(env.stringified)
-        // 환경변수 주입
-    ]
+    externals: [nodeExternals({
+        allowlist: [/@babel/],
+    }),
+    ],
 };
