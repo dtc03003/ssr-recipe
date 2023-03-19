@@ -107,16 +107,16 @@ module.exports = {
                         ]
                     },
                     // url-loader를 위한 설정
-                    {
-                        test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
-                        loader: require.resolve('url-loader'),
-                        options: {
-                            emitFile: false, // 파일을 따로 저장하지 않는 옵션
-                            limit: 10000, // 원래는 9.76KB가 넘어가면 파일로 저장하는데
-                            // emitFile 값이 false일 때는 경로만 준비하고 파일은 저장하지 않습니다.
-                            name: 'static/media/[name].[hash:8].[ext]'
-                        }
-                    },
+                    // {
+                    //     test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+                    //     loader: require.resolve('url-loader'),
+                    //     options: {
+                    //         emitFile: false, // 파일을 따로 저장하지 않는 옵션
+                    //         limit: 10000, // 원래는 9.76KB가 넘어가면 파일로 저장하는데
+                    //         // emitFile 값이 false일 때는 경로만 준비하고 파일은 저장하지 않습니다.
+                    //         name: 'static/media/[name].[hash:8].[ext]'
+                    //     }
+                    // },
                     // 위에서 설정된 확장자를 제외한 파일들은
                     // file-loader를 사용합니다.
                     {
