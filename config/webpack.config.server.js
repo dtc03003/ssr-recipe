@@ -11,6 +11,10 @@ const sassModuleRegex = /\.module\.(scss|sass)$/;
 
 const env = getClientEnvironment(paths.publicUrlOrPath.slice(0, -1));
 
+const imageInlineSizeLimit = parseInt(
+    process.env.IMAGE_INLINE_SIZE_LIMIT || '10000'
+);
+
 module.exports = {
     mode: 'production', // 프로덕션 모드로 설정하여 최적화 옵션들을 활성화
     entry: paths.ssrIndexJs, // 엔트리 경로
@@ -35,6 +39,14 @@ module.exports = {
                             customize: require.resolve(
                                 'babel-preset-react-app/webpack-overrides'
                             ),
+                            presets: [
+                                [
+                                    require.resolve('babel-preset-react-app'),
+                                    {
+                                        runtime: 'automatic' 
+                                    },
+                                ],
+                            ],
                             plugins: [
                                 [
                                     require.resolve('babel-plugin-named-asset-import'),
@@ -119,6 +131,15 @@ module.exports = {
                     // },
                     // 위에서 설정된 확장자를 제외한 파일들은
                     // file-loader를 사용합니다.
+                    {
+                        test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+                        type: 'asset',
+                        parser: {
+                            dataUrlCondition: {
+                                maxSize: imageInlineSizeLimit,
+                            },
+                        },
+                    },
                     {
                         loader: require.resolve('file-loader'),
                         exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
