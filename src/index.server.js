@@ -3,6 +3,7 @@ import ReactDOMServer from "react-dom/server";
 import express from "express";
 import { StaticRouter } from "react-router-dom/server"; // react-router-dom/server
 import App from "./App";
+import path from 'path'
 
 const app = express();
 // 서버 사이드 렌더링을 처리할 핸들러 함수이다.
@@ -19,6 +20,11 @@ const serverRender = (req, res, next) => {
     res.send(root); // 클라이언트에게 결과물을 응답한다.
 };
 
+const serve = express.static(path.resolve('./build'), {
+    index: false
+})
+
+app.use(serve)
 // 위 함수를 서버에 적용
 app.use(serverRender);
 
